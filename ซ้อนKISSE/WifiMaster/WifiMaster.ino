@@ -1,104 +1,130 @@
-#include <SoftwareSerial.h>
+#include <ESP8266WiFi.h>
+#include <WiFiUDP.h>
+
+
 #define Switch_1        13
 #define Switch_2        12
-#define Lighter         6
+
+unsigned int UDPPort = 888 ;
+const char* host = "192.168.43.177";
+const char* ssid = "mmmm";
+const char* password = "1234512345";
+WiFiUDP Udp;
+int packet, packetSize, len, NumText;
+String NameString;
+String BufferString, CalString;
+String Readdata;
 
 uint8_t Status_Sw1, Status_Sw2;
-byte DataRead[17];
+byte DataRead[15];
 bool ClearStatus;
-char Datatran[255];
-SoftwareSerial ESPPort(2, 3);
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  ESPPort.begin(9600);
+//String Readdata;
 
+
+void setup() {
+
+  Serial.begin(9600);
+  Serial.print("Connecting to  ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.println(".");
+  }
   pinMode(Switch_1, INPUT);
   pinMode(Switch_2, INPUT);
-  pinMode(Lighter, OUTPUT);
 
   ClearStatus = false;
-  analogWrite(Lighter, 0);
-
   delay(1000);
+  
+  Udp.begin(UDPPort);
+  Serial.println();
+  Serial.print("WiFi UDP Mode : ");
+  Serial.println(WiFi.localIP().toString());
+
 }
 
-void loop() {
-  Status_Sw1 = digitalRead(Switch_1);
-  Status_Sw2 = digitalRead(Switch_2);
-  if(Status_Sw2 == 0)
-  {
-    analogWrite(Lighter, 255);
-  }
-  else
-  {
-    analogWrite(Lighter, 0);
-  }
-  if (Status_Sw1 == 0) {
-    CommandReadSensor();
-    Serial.print("OK");
-    Serial.print(DataRead[0], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[1], HEX );
-    Serial.print("  ");
-    Serial.print(DataRead[2], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[3], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[4], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[5], HEX );
-    Serial.print("   ");
-    Serial.print(DataRead[6], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[7], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[8], HEX );
-    Serial.print("  ");
-    Serial.print(DataRead[9], HEX );
-    Serial.print("   ");
-    Serial.print(DataRead[10], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[11], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[12]);
-    Serial.print(" ");
-    Serial.print(DataRead[13], HEX );
-    Serial.print(" ");
-    Serial.print(DataRead[14], HEX );
-    Serial.print(" ");
-    Serial.println(DataRead[15], HEX );
-    byte g = 0;
-    String DataRead_10;
-    if ((DataRead[10]) < 10)
-    {
-      DataRead_10 = String(g) + String(DataRead[10]);
-    }
-    else
-    {
-      DataRead_10 = String(DataRead[10]);
-    }
-    String DataRead_11;
-    if ((DataRead[11]) < 10)
-    {
-      DataRead_11 = String(g) + String(DataRead[11]);
-    }
-    else
-    {
-      DataRead_11 = String(DataRead[11]);
-    }
 
-    String Buffer_2 = String(DataRead[0]) + String(DataRead[3]) + String(DataRead[4]) + String(DataRead[5]) + String(DataRead[7]) + String(DataRead[8]) + String(DataRead[9]) + String(DataRead_10) + String(DataRead_11) + String(DataRead[12]) + String(DataRead[13]) +  String(DataRead[14]) + String(DataRead[15]);
-    Buffer_2.toCharArray(Datatran, 255);
-    ESPPort.write(Datatran, 14);
-    Serial.println(Buffer_2);
+
+
+
+void loop() {
+
+
+
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Status_Sw1 = digitalRead(Switch_1);
+  if (Status_Sw1 == 0) {
+
+
+    CommandReadSensor();
+
+    Serial.print(" ");
+    Serial.print("OK");
+    Serial.print(" ");
+    Serial.print(DataRead[1], HEX);
+    Serial.print("  ");
+    Serial.print(DataRead[2], HEX);
+    Serial.print(" ");
+    Serial.print(DataRead[3], HEX);
+    Serial.print(" ");
+    Serial.print(DataRead[4], HEX);
+    Serial.print(" ");
+    Serial.print(DataRead[5], HEX);
+    Serial.print("   ");
+    Serial.print(DataRead[6], HEX);
+    Serial.print(" ");
+    Serial.print(DataRead[7], HEX);
+    Serial.print(" ");
+    Serial.print(DataRead[8], HEX);
+    Serial.print("  ");
+    Serial.print(DataRead[9], HEX);
+    Serial.print("   ");
+    Serial.print(DataRead[10], HEX);
+    Serial.print(" ");
+    Serial.print(DataRead[11], HEX);
+    Serial.print(" ");
+    Serial.print(DataRead[12], HEX);
+    Serial.print("  ");
+    Serial.print(DataRead[13], HEX);
+    Serial.print("  ");
+    Serial.println(DataRead[14], HEX);
+
+
     delay(25);
   }
   while (Status_Sw1 == 0) {
 
     Status_Sw1 = digitalRead(Switch_1);
   }
+
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Status_Sw2 = digitalRead(Switch_2);
+  if (Status_Sw2 == 0) {
+
+    //
+
+    delay(25);
+  }
+  while (Status_Sw2 == 0) {
+
+    Status_Sw2 = digitalRead(Switch_2);
+  }
+  
+  NameString = String(DataRead[0]) + String(DataRead[1]) + String(DataRead[2]) + String(DataRead[3]) + String(DataRead[4]) + String(DataRead[5]) + String(DataRead[6]) + String(DataRead[7]) + String(DataRead[8]) + String(DataRead[9]) + String(DataRead[10]) + String(DataRead[11]) + String(DataRead[12]) + String(DataRead[13]) + String(DataRead[14]) + String("*");
+  char StringBuffer[255];
+  Serial.println();
+  NameString.toCharArray(StringBuffer,255);
+  Udp.begin(UDPPort);
+  Udp.beginPacket(host, UDPPort);
+  Udp.write(StringBuffer);
+  Udp.endPacket();
+
 }
+
+
+
+// *************************************************************
 void CommandReadSensor() {
 
   boolean LoopRead = true;

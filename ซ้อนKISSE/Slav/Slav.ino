@@ -40,7 +40,7 @@ const char *password = "1234512345";
 
 unsigned int UDPPort = 2390;                // local port to listen on
 
-int HexToDe = 0;
+
 int Status_Sw1, Status_Sw2;
 int packetSize, len, NumText;
 String NameString, BufferString;
@@ -135,57 +135,206 @@ void setup() {
   } while ( u8g2.nextPage() );
 }
 
+
+// ######################### OLED ###############################
+
+//PrintOLED_Size1(Col,Line,s); (9 Pixel Height:  18 Chr, 5 Line)
+//PrintOLED_Size2(Col,Line,s); (11 Pixel Height: 14 Chr, 4 Line)
+//PrintOLED_Size3(Col,Line,s); (13 Pixel Height: 11 Chr, 3 Line)
+//PrintOLED_Size4(Col,Line,s); (15 Pixel Height: 8 Chr, 3 Line)
+
+//u8g2_font_ncenB10_tr  (11 Pixel Height)
+//u8g2_font_crox4tb_tr  (13 Pixel Height)
+//u8g2_font_fub35_tn    (number 35 Pixel Height)
+//u8g2_font_fub20_tn    (number 20 Pixel Height)
+
+//u8g2.drawXBMP(0, 32, cross_width, cross_height, cross_bits);
+//u8g2.setFont(u8g2_font_fub20_tn);
+//u8g2.drawStr(8,48,"13:30:45");
+
+//u8g2.firstPage();
+//do {
+
+//
+//} while ( u8g2.nextPage() );
+
+
+
 void loop() {
-  // put your main code here, to run repeatedly:
-  packetSize = Udp.parsePacket();
-  if (Udp.available())
-  {
+
+
+
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Status_Sw1 = digitalRead(Switch_1);
+  if (Status_Sw1 == 0) {
+
+
+  }
+
+  while (Status_Sw1 == 0) {
+
+    Status_Sw1 = digitalRead(Switch_1);
+  }
+
+
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Status_Sw2 = digitalRead(Switch_2);
+  if (Status_Sw2 == 0) {
+
+
+  }
+
+  while (Status_Sw2 == 0) {
+
+    Status_Sw2 = digitalRead(Switch_2);
+  }
+
+
+  // ------------------------------------------------------
+
+  packetSize = Udp.parsePacket();                   // if there's data available, read a packet
+
+  if (Udp.available()) {
+
+    int i;
+
     char packetBuffer[packetSize];                      //buffer to hold incoming packet
     len = Udp.read(packetBuffer, packetSize);
+
     if (len > 0) {
+
       packetBuffer[len] = 0;
     }
-    Serial.println(packetBuffer);
-    String Humanity = String(packetBuffer[1]) + String(packetBuffer[2]) + "." + String(packetBuffer[3]);
-    String Temp = String(packetBuffer[4]) + String(packetBuffer[5]) + "." + String(packetBuffer[6]);
-    String aa = String(packetBuffer[7])+String(packetBuffer[8]);
-    String bb = String(packetBuffer[9])+String(packetBuffer[10]);
-    String cc = String(packetBuffer[11]);
-//    String cc = String(packetBuffer[10])+String(packetBuffer[11]);
-//    String dd = String(packetBuffer[12]);
-    int a = aa.toInt();
-    int b = bb.toInt();
-    int c = cc.toInt();
-//    int c = cc.toInt();
-//    int d = dd.toInt();
-    int f = (a*16*16)+(b*16)+c;
-    Serial.println(String(a) + '.' + String(b) + '.' + '.' + String(f));
+
+
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    BufferString = "";
+    if (packetBuffer[5] == '0') {
+      if (packetBuffer[6] == '0') {
+
+        i = 7;
+      }
+      else {
+
+        i = 6;
+      }
+    }
+    else {
+
+      i = 5;
+    }
+
+    for (i; i < 8; i++) {
+
+      BufferString = BufferString + String(packetBuffer[i]);
+    }
+
+    len = BufferString.length();
+    char StringBuff_1[len + 1];
+    BufferString.toCharArray(StringBuff_1, len + 1);
+
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    BufferString = "";
+    if (packetBuffer[8] == '0') {
+      if (packetBuffer[9] == '0') {
+
+        i = 10;
+      }
+      else {
+
+        i = 9;
+      }
+    }
+    else {
+
+      i = 8;
+    }
+
+    for (i; i < 11; i++) {
+
+      BufferString = BufferString + String(packetBuffer[i]);
+    }
+
+    len = BufferString.length();
+    char StringBuff_2[len + 1];
+    BufferString.toCharArray(StringBuff_2, len + 1);
+
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    BufferString = "";
+    if (packetBuffer[11] == '0') {
+      if (packetBuffer[12] == '0') {
+
+        i = 13;
+      }
+      else {
+
+        i = 12;
+      }
+    }
+    else {
+
+      i = 11;
+    }
+
+    for (i; i < 14; i++) {
+
+      BufferString = BufferString + String(packetBuffer[i]);
+    }
+
+    len = BufferString.length();
+    char StringBuff_3[len + 1];
+    BufferString.toCharArray(StringBuff_3, len + 1);
+
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    BufferString = "";
+
+    for (i = 3; i < 5; i++) {
+
+      BufferString = BufferString + String(packetBuffer[i]);
+    }
+
+    len = BufferString.toInt();
+
+    if (len == 78) {
+
+      BufferString = "ON";
+    }
+    else if (len == 70) {
+
+      BufferString = "OFF";
+    }
+
+    len = BufferString.length();
+    char StringBuff_4[len + 1];
+    BufferString.toCharArray(StringBuff_4, len + 1);
+
+
+
+
     u8g2.firstPage();
     do {
-      //            PrintOLED_Size2(1,1,"MistMaker:");
-      //            PrintOLED_Size2(12,1,StringBuff_4);
-      PrintOLED_Size2(3, 1, "Sensor Data");
-      // HUMI ===========
-      PrintOLED_Size2(1, 2, "Humi:       %");
-      PrintOLED_Size2(7, 2, Humanity);
-      // TEMP ===========
-      PrintOLED_Size2(1, 3, "Temp:       C");
-      PrintOLED_Size2(7, 3, Temp);
-      // LIGHT ===========
-      PrintOLED_Size2(1, 4, "Light:    ");
-      PrintOLED_Size2(8, 4, String(f));
+
+      PrintOLED_Size2(1, 1, "MistMaker:");
+      PrintOLED_Size2(12, 1, StringBuff_4);
+      PrintOLED_Size2(1, 2, "Fan:    %");
+      PrintOLED_Size2(6, 2, StringBuff_1);
+      PrintOLED_Size2(1, 3, "Heater:    %");
+      PrintOLED_Size2(9, 3, StringBuff_2);
+      PrintOLED_Size2(1, 4, "Lighting:    %");
+      PrintOLED_Size2(11, 4, StringBuff_3);
 
     } while ( u8g2.nextPage() );
   }
+
 }
 
 
 
 
+// ################################################################
 
+void PrintOLED_Size1 (int Col, int Line, String s) {
 
-void PrintOLED_Size1 (int Col, int Line, String s)
-{
   int len;
 
   len = s.length();

@@ -1,73 +1,79 @@
-#include <SoftwareSerial.h>
+
 #define Switch_1        13
 #define Switch_2        12
+#define Heater_On       11
+#define Heater_Level    9
 #define Lighter         6
+#define Fan_On          8
+#define Fan_Speed       10
+#define Mist_Pump       7
 
 uint8_t Status_Sw1, Status_Sw2;
 byte DataRead[17];
 bool ClearStatus;
 char Datatran[255];
-SoftwareSerial ESPPort(2, 3);
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  ESPPort.begin(9600);
+
 
   pinMode(Switch_1, INPUT);
   pinMode(Switch_2, INPUT);
+  pinMode(Heater_On, OUTPUT);
+  pinMode(Heater_Level, OUTPUT);
   pinMode(Lighter, OUTPUT);
+  pinMode(Fan_On, OUTPUT);
+  pinMode(Fan_Speed, OUTPUT);
+  pinMode(Mist_Pump, OUTPUT);
 
-  ClearStatus = false;
+  digitalWrite(Heater_On, LOW);
+  analogWrite(Heater_Level, 0);
   analogWrite(Lighter, 0);
+  digitalWrite(Fan_On, LOW);
+  analogWrite(Fan_Speed, 0);
+  digitalWrite(Mist_Pump, LOW);
+  ClearStatus = false;
 
   delay(1000);
 }
 
 void loop() {
   Status_Sw1 = digitalRead(Switch_1);
-  Status_Sw2 = digitalRead(Switch_2);
-  if(Status_Sw2 == 0)
-  {
-    analogWrite(Lighter, 255);
-  }
-  else
-  {
-    analogWrite(Lighter, 0);
-  }
   if (Status_Sw1 == 0) {
     CommandReadSensor();
     Serial.print("OK");
-    Serial.print(DataRead[0], HEX );
+    Serial.print(DataRead[0],HEX );
     Serial.print(" ");
-    Serial.print(DataRead[1], HEX );
+    Serial.print(DataRead[1],HEX );
     Serial.print("  ");
-    Serial.print(DataRead[2], HEX );
+    Serial.print(DataRead[2],HEX );
     Serial.print(" ");
-    Serial.print(DataRead[3], HEX );
+    Serial.print(DataRead[3],HEX );
     Serial.print(" ");
-    Serial.print(DataRead[4], HEX );
+    Serial.print(DataRead[4],HEX );
     Serial.print(" ");
-    Serial.print(DataRead[5], HEX );
+    Serial.print(DataRead[5],HEX );
     Serial.print("   ");
-    Serial.print(DataRead[6], HEX );
+    Serial.print(DataRead[6],HEX );
     Serial.print(" ");
-    Serial.print(DataRead[7], HEX );
+    Serial.print(DataRead[7],HEX );
     Serial.print(" ");
-    Serial.print(DataRead[8], HEX );
+    Serial.print(DataRead[8],HEX );
     Serial.print("  ");
-    Serial.print(DataRead[9], HEX );
+    Serial.print(DataRead[9],HEX );
     Serial.print("   ");
-    Serial.print(DataRead[10], HEX );
+    Serial.print(DataRead[10],HEX );
     Serial.print(" ");
-    Serial.print(DataRead[11], HEX );
+    Serial.print(DataRead[11],HEX );
     Serial.print(" ");
     Serial.print(DataRead[12]);
     Serial.print(" ");
-    Serial.print(DataRead[13], HEX );
+    Serial.print(DataRead[13],HEX );
     Serial.print(" ");
-    Serial.print(DataRead[14], HEX );
+    Serial.print(DataRead[14],HEX );
     Serial.print(" ");
-    Serial.println(DataRead[15], HEX );
+    Serial.println(DataRead[15],HEX );
     byte g = 0;
     String DataRead_10;
     if ((DataRead[10]) < 10)
@@ -89,13 +95,29 @@ void loop() {
     }
 
     String Buffer_2 = String(DataRead[0]) + String(DataRead[3]) + String(DataRead[4]) + String(DataRead[5]) + String(DataRead[7]) + String(DataRead[8]) + String(DataRead[9]) + String(DataRead_10) + String(DataRead_11) + String(DataRead[12]) + String(DataRead[13]) +  String(DataRead[14]) + String(DataRead[15]);
-    Buffer_2.toCharArray(Datatran, 255);
-    ESPPort.write(Datatran, 14);
+    String Humanity = String(DataRead[3]) + String(DataRead[4]) + "." + String(DataRead[5]);
+    String Temp = String(DataRead[7]) + String(DataRead[8]) + "." + String(DataRead[9]);
+    String Light_1 = String(DataRead[10]);
+    String Light_2 = String(DataRead_11);
+    String Light_3 = String(DataRead[12]);
+    float Hu = Humanity.toFloat();
+    float Tem = Temp.toFloat();
+    int a = Light_1.toInt();
+    int b = Light_2.toInt();
+    int c = Light_3.toInt();
+    int Light = (a * 16 * 16) +(b * 16)+ c;
+    Serial.println("Humanity = " + String(Hu) + ":" + "Temp = " + String(Tem) + ":" + "Light" + String(Light));
     Serial.println(Buffer_2);
     delay(25);
   }
-  while (Status_Sw1 == 0) {
+  digitalWrite(Fan_On, HIGH);
+  digitalWrite(Heater_On, LOW);
 
+  analogWrite(Fan_Speed, 255);
+  analogWrite(Heater_Level, 255);
+  analogWrite(Lighter, 255);
+  
+  while (Status_Sw1 == 0) {
     Status_Sw1 = digitalRead(Switch_1);
   }
 }
