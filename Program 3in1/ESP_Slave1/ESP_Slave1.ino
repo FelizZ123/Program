@@ -38,7 +38,7 @@ const char *ssid = "mmmm";
 const char *password = "1234512345";
 
 
-  unsigned int UDPPort = 2390;                // local port to listen on
+unsigned int UDPPort = 2390;              // local port to listen on
   
 
   int Status_Sw1, Status_Sw2;
@@ -313,15 +313,14 @@ void loop() {
         
     u8g2.firstPage();
     do {
-        PrintOLED_Size2(1,1,"Temp:     C");
-//      PrintOLED_Size2(1,1,"MistMaker:");
-//      PrintOLED_Size2(12,1,StringBuff_4);     
-//      PrintOLED_Size2(1,2,"Fan:    %");
-//      PrintOLED_Size2(6,2,StringBuff_1);
-//      PrintOLED_Size2(1,3,"Heater:    %");
-//      PrintOLED_Size2(9,3,StringBuff_2);
-//      PrintOLED_Size2(1,4,"Lighting:    %");
-//      PrintOLED_Size2(11,4,StringBuff_3);
+      PrintOLED_Size2(1,1,"MistMaker:");
+      PrintOLED_Size2(12,1,StringBuff_4);     
+      PrintOLED_Size2(1,2,"Fan:    %");
+      PrintOLED_Size2(6,2,StringBuff_1);
+      PrintOLED_Size2(1,3,"Heater:    %");
+      PrintOLED_Size2(9,3,StringBuff_2);
+      PrintOLED_Size2(1,4,"Lighting:    %");
+      PrintOLED_Size2(11,4,StringBuff_3);
       
     } while ( u8g2.nextPage() );
   }

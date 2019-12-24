@@ -42,12 +42,13 @@ void loop() {
   if (Serial.available())
   {
     String Buffer_1;
-    char DataRead[14];
+    char DataRead[11];
     Buffer_1 = Serial.readString();
     Serial.println(Buffer_1);
-    Buffer_1.toCharArray(DataRead, 14);
+    Buffer_1.toCharArray(DataRead, 11);
     Udp.beginPacket(host, UDPPort);                        //send ip to server
     Udp.write(DataRead);
     Udp.endPacket();
   }
+//  delay(100);
 }

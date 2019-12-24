@@ -1,4 +1,3 @@
-
 #define Switch_1        13
 #define Switch_2        12
 #define Heater_On       11
@@ -40,40 +39,50 @@ void setup() {
 
 void loop() {
   Status_Sw1 = digitalRead(Switch_1);
+  Status_Sw2 = digitalRead(Switch_2);
+  //  if (Status_Sw2 == 0)
+  //  {
+  //    digitalWrite(7,HIGH);
+  //  }
+  //  else
+  //  {
+  //    digitalWrite(7,LOW);
+  //  }
+  //digitalWrite(7,HIGH);
   if (Status_Sw1 == 0) {
     CommandReadSensor();
     Serial.print("OK");
-    Serial.print(DataRead[0],HEX );
+    Serial.print(DataRead[0], HEX );
     Serial.print(" ");
-    Serial.print(DataRead[1],HEX );
+    Serial.print(DataRead[1], HEX );
     Serial.print("  ");
-    Serial.print(DataRead[2],HEX );
+    Serial.print(DataRead[2], HEX );
     Serial.print(" ");
-    Serial.print(DataRead[3],HEX );
+    Serial.print(DataRead[3], HEX );
     Serial.print(" ");
-    Serial.print(DataRead[4],HEX );
+    Serial.print(DataRead[4], HEX );
     Serial.print(" ");
-    Serial.print(DataRead[5],HEX );
+    Serial.print(DataRead[5], HEX );
     Serial.print("   ");
-    Serial.print(DataRead[6],HEX );
+    Serial.print(DataRead[6], HEX );
     Serial.print(" ");
-    Serial.print(DataRead[7],HEX );
+    Serial.print(DataRead[7], HEX );
     Serial.print(" ");
-    Serial.print(DataRead[8],HEX );
+    Serial.print(DataRead[8], HEX );
     Serial.print("  ");
-    Serial.print(DataRead[9],HEX );
+    Serial.print(DataRead[9], HEX );
     Serial.print("   ");
-    Serial.print(DataRead[10],HEX );
+    Serial.print(DataRead[10], HEX );
     Serial.print(" ");
-    Serial.print(DataRead[11],HEX );
+    Serial.print(DataRead[11], HEX );
     Serial.print(" ");
     Serial.print(DataRead[12]);
     Serial.print(" ");
-    Serial.print(DataRead[13],HEX );
+    Serial.print(DataRead[13], HEX );
     Serial.print(" ");
-    Serial.print(DataRead[14],HEX );
+    Serial.print(DataRead[14], HEX );
     Serial.print(" ");
-    Serial.println(DataRead[15],HEX );
+    Serial.println(DataRead[15], HEX );
     byte g = 0;
     String DataRead_10;
     if ((DataRead[10]) < 10)
@@ -105,18 +114,19 @@ void loop() {
     int a = Light_1.toInt();
     int b = Light_2.toInt();
     int c = Light_3.toInt();
-    int Light = (a * 16 * 16) +(b * 16)+ c;
+    int Light = (a * 16 * 16) + (b * 16) + c;
     Serial.println("Humanity = " + String(Hu) + ":" + "Temp = " + String(Tem) + ":" + "Light" + String(Light));
     Serial.println(Buffer_2);
     delay(25);
+    analogWrite(Lighter,155);
   }
-  digitalWrite(Fan_On, HIGH);
-  digitalWrite(Heater_On, LOW);
+  //  digitalWrite(Fan_On, HIGH);
+  //  digitalWrite(Heater_On, LOW);
+  //
+  //  analogWerite(Fan_Speed, 255);
+  //  analogWrite(Heater_Level, 255);
+  //  analogWrite(Lighter, 255);
 
-  analogWrite(Fan_Speed, 255);
-  analogWrite(Heater_Level, 255);
-  analogWrite(Lighter, 255);
-  
   while (Status_Sw1 == 0) {
     Status_Sw1 = digitalRead(Switch_1);
   }

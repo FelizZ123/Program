@@ -10,7 +10,6 @@
 const char *ssid = "mmmm";
 const char *password = "1234512345";
 
-
 unsigned int UDPPort = 2390;                // local port to listen on
 const char* host = "192.168.43.177";
 
